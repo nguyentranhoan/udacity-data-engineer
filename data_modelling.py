@@ -63,7 +63,6 @@ with open('event_datafile_new.csv', 'w', encoding='utf8', newline='') as f:
 with open('event_datafile_new.csv', 'r', encoding='utf8') as f:
     print(sum(1 for line in f))
 
-
 # This should make a connection to a Cassandra instance your local machine
 # (127.0.0.1)
 
@@ -88,8 +87,13 @@ try:
 except Exception as e:
     print(e)
 
-query = f"CREATE TABLE IF NOT EXISTS music_library "
-query = query + "(artist text, firstName_of_user text, gender_of_user text, item_number_in_session int, last_name_of_user text, length_of_the_song text, level text, location_of_the_user text, sessionId int, song_title text, userId int, PRIMARY KEY (sessionId, item_number_in_session))"
+query = """CREATE TABLE IF NOT EXISTS music_library (
+                artist text, 
+                item_number_in_session int, 
+                length_of_the_song double, 
+                session_id int, 
+                song_title text, 
+                PRIMARY KEY (session_id, item_number_in_session))"""
 try:
     session.execute(query)
 except Exception as e:
@@ -101,18 +105,20 @@ with open(file, encoding='utf8') as f:
     csvreader = csv.reader(f)
     next(csvreader)  # skip header
     for line in csvreader:
-        print(line[0], line[1], line[2], line[3], line[4], line[5],
-              line[6], line[7], line[8], line[9], line[10])
-## TO-DO: Assign the INSERT statements into the `query` variable
-        query = "INSERT INTO music_library (artist, firstName_of_user, gender_of_user, item_number_in_session, last_name_of_user, length_of_the_song, level, location_of_the_user, sessionId, song_title, userId)"
-        query = query + "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        ## TO-DO: Assign the INSERT statements into the `query` variable
+        query = f"""INSERT INTO music_library 
+                    (artist, item_number_in_session, length_of_the_song, session_id, song_title)
+                    VALUES
+                    ($${line[0]}$$, {int(line[3])}, {float(line[5])}, {int(line[8])}, $$'{line[9]}'$$)"""
         ## TO-DO: Assign which column element should be assigned for each column in the INSERT statement.
         ## For e.g., to INSERT artist_name and user first_name, you would change the code below to `line[0], line[1]`
-        session.execute(query, (line[0], line[1], line[2], int(
-            line[3]), line[4], line[5], line[6], line[7], int(line[8]), line[9], int(line[10])))
-## TO-DO: Query 1:  Give me the artist, song title and song's length in the music app history that was heard during \
-## sessionId = 338, and itemInSession = 4
-query = f"select artist, song_title, length_of_the_song from music_library WHERE sessionId=338 and item_number_in_session=4"
+        session.execute(query)
+
+# TO-DO: Query 1:  Give me the artist, song title and song's length in the music app history that was heard during \
+# session_id = 338, and itemInSession = 4
+query = f"""select artist, song_title, length_of_the_song 
+            from music_library 
+            where session_id=338 and item_number_in_session=4"""
 try:
     rows = session.execute(query)
     for row in rows:
@@ -120,9 +126,8 @@ try:
 except Exception as e:
     print(e)
 
-
 ## TO-DO: Add in the SELECT statement to verify the data was entered into the table
-query = f"select * from music_library"
+query = f"select artist from music_library limit 2"
 try:
     rows = session.execute(query)
 except Exception as e:
@@ -131,28 +136,36 @@ except Exception as e:
 for row in rows:
     print(row)
 
-
 # We have provided part of the code to set up the CSV file. Please complete the Apache Cassandra code below#
-# file = 'event_datafile_new.csv'
+file = 'event_datafile_new.csv'
 
-# with open(file, encoding = 'utf8') as f:
-#     csvreader = csv.reader(f)
-#     next(csvreader) # skip header
-#     for line in csvreader:
-# ## TO-DO: Assign the INSERT statements into the `query` variable
-#         query = "INSERT INTO music_library (artist, firstName_of_user, gender_of_user, item_number_in_session, last_name_of_user, length_of_the_song, level, location_of_the_user, sessionId, song_title, userId)"
-#         query = query + "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
-#         ## TO-DO: Assign which column element should be assigned for each column in the INSERT statement.
-#         ## For e.g., to INSERT artist_name and user first_name, you would change the code below to `line[0], line[1]`
-#         session.execute(query, (line[0], line[1], line[2], int(line[3]), line[4], line[5], line[6], line[7], int(line[8]), line[9], int(line[10])))
+with open(file, encoding='utf8') as f:
+    csvreader = csv.reader(f)
+    next(csvreader)  # skip header
+    for line in csvreader:
+        ## TO-DO: Assign the INSERT statements into the `query` variable
+        query = f"""INSERT INTO music_library 
+                    (artist, item_number_in_session, length_of_the_song, session_id, song_title)
+                    VALUES
+                    ($${line[0]}$$, {int(line[3])}, {float(line[5])}, {int(line[8])}, $${line[9]}$$)"""
+        ## TO-DO: Assign which column element should be assigned for each column in the INSERT statement.
+        ## For e.g., to INSERT artist_name and user first_name, you would change the code below to `line[0], line[1]`
+        session.execute(query)
 
-
-query = f"CREATE TABLE IF NOT EXISTS music_artist "
-query = query + "(artist text, firstName_of_user text, gender_of_user text, item_number_in_session int, last_name_of_user text, length_of_the_song text, level text, location_of_the_user text, sessionId int, song_title text, userId int, PRIMARY KEY (sessionId, userid))"
+query = """CREATE TABLE IF NOT EXISTS music_artist (
+                artist text, 
+                first_name_of_user text, 
+                item_number_in_session int, 
+                last_name_of_user text, 
+                session_id int, 
+                song_title text, 
+                user_id int, 
+                PRIMARY KEY ((session_id, user_id), item_number_in_session))"""
 try:
     session.execute(query)
 except Exception as e:
     print(e)
+
 
 file = 'event_datafile_new.csv'
 
@@ -160,19 +173,22 @@ with open(file, encoding='utf8') as f:
     csvreader = csv.reader(f)
     next(csvreader)  # skip header
     for line in csvreader:
-        print(line[0], line[1], line[2], line[3], line[4], line[5],
-              line[6], line[7], line[8], line[9], line[10])
-## TO-DO: Assign the INSERT statements into the `query` variable
-        query = "INSERT INTO music_artist (artist, firstName_of_user, gender_of_user, item_number_in_session, last_name_of_user, length_of_the_song, level, location_of_the_user, sessionId, song_title, userId)"
-        query = query + "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        ## TO-DO: Assign the INSERT statements into the `query` variable
+        query = f"""INSERT INTO music_artist 
+                    (artist, first_name_of_user, item_number_in_session, last_name_of_user, session_id, song_title, user_id )
+                    values
+                    ($${line[0]}$$, $${line[1]}$$, {int(line[3])}, 
+                    $${line[4]}$$, {int(line[8])}, $$'{line[9]}'$$, {int(line[10])})"""
         ## TO-DO: Assign which column element should be assigned for each column in the INSERT statement.
         ## For e.g., to INSERT artist_name and user first_name, you would change the code below to `line[0], line[1]`
-        session.execute(query, (line[0], line[1], line[2], int(
-            line[3]), line[4], line[5], line[6], line[7], int(line[8]), line[9], int(line[10])))
+        session.execute(query)
 
 ## TO-DO: Query 2: Give me only the following: name of artist, song (sorted by itemInSession) and user (first and last name)\
 ## for userid = 10, sessionid = 182
-query = f"select artist, song_title, first_name_of_user, last_name_of_user from music_artist WHERE userId=10 and sessionId=182 ORDER BY item_number_in_session"
+query = f"""select artist, song_title, first_name_of_user, last_name_of_user 
+            from music_artist 
+            where user_id=10 and session_id=182 
+            order by item_number_in_session"""
 try:
     rows = session.execute(query)
 except Exception as e:
@@ -181,12 +197,18 @@ except Exception as e:
 for row in rows:
     print(row)
 
-query = f"CREATE TABLE IF NOT EXISTS music_artist_detail "
-query = query + "(artist text, firstName_of_user text, gender_of_user text, item_number_in_session int, last_name_of_user text, length_of_the_song text, level text, location_of_the_user text, sessionId int, song_title text, userId int, PRIMARY KEY (song_title))"
+
+query = """CREATE TABLE IF NOT EXISTS music_artist_detail (
+                first_name_of_user text, 
+                last_name_of_user text, 
+                song_title text, 
+                user_id int, 
+                PRIMARY KEY (song_title, user_id))"""
 try:
     session.execute(query)
 except Exception as e:
     print(e)
+
 
 file = 'event_datafile_new.csv'
 
@@ -194,18 +216,20 @@ with open(file, encoding='utf8') as f:
     csvreader = csv.reader(f)
     next(csvreader)  # skip header
     for line in csvreader:
-        print(line[0], line[1], line[2], line[3], line[4], line[5],
-              line[6], line[7], line[8], line[9], line[10])
-## TO-DO: Assign the INSERT statements into the `query` variable
-        query = "INSERT INTO music_artist_detail (artist, firstName_of_user, gender_of_user, item_number_in_session, last_name_of_user, length_of_the_song, level, location_of_the_user, sessionId, song_title, userId)"
-        query = query + "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)"
+        ## TO-DO: Assign the INSERT statements into the `query` variable
+        query = f"""INSERT INTO music_artist_detail 
+                    (first_name_of_user, last_name_of_user, song_title, user_id)
+                    values
+                    ($${line[1]}$$, $${line[4]}$$,  $$'{line[9]}'$$, {int(line[10])})"""
         ## TO-DO: Assign which column element should be assigned for each column in the INSERT statement.
         ## For e.g., to INSERT artist_name and user first_name, you would change the code below to `line[0], line[1]`
-        session.execute(query, (line[0], line[1], line[2], int(
-            line[3]), line[4], line[5], line[6], line[7], int(line[8]), line[9], int(line[10])))
+        session.execute(query)
+
 
 ## TO-DO: Query 3: Give me every user name (first and last) in my music app history who listened to the song 'All Hands Against His Own'
-query = f"select first_name_of_user, last_name_of_user from music_artist_detail WHERE song_title='All Hands Against His Own'"
+query = f"""select first_name_of_user, last_name_of_user 
+            from music_artist_detail 
+            where song_title='All Hands Against His Own'"""
 try:
     rows = session.execute(query)
 except Exception as e:
@@ -213,15 +237,19 @@ except Exception as e:
 
 for row in rows:
     print(row)
+
 
 ## TO-DO: Drop the table before closing out the sessions
 query1 = "drop table music_artist"
 query2 = "drop table music_artist_detail"
 query3 = "drop table music_library"
 try:
-    rows = session.execute(query)
+    rows = session.execute(query1)
+    rows = session.execute(query2)
+    rows = session.execute(query3)
 except Exception as e:
     print(e)
+
 
 session.shutdown()
 cluster.shutdown()
