@@ -1,0 +1,1 @@
+SELECT * FROM "udacity"."accelerometer_landing" limit 10;
