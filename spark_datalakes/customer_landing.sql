@@ -1,1 +1,0 @@
-SELECT * FROM "udacity"."customer_landing" limit 10;
