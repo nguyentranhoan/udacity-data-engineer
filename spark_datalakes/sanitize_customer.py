@@ -35,7 +35,7 @@ source_data = glueContext.create_dynamic_frame.from_catalog(
     )
 # Convert from dynamic frame to data-frame
 source_records_as_df = source_data.toDF()
-sanitize_data = source_records_as_df.na.drop(subset=["sharewithresearchasofdate"])
+sanitize_data = source_records_as_df.na.drop(subset=["shareWithPublicAsOfDate"])
 
 # Write to output location
 glueContext.write_dynamic_frame.from_options(
