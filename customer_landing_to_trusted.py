@@ -9,6 +9,8 @@ from awsglue.context import GlueContext
 from awsglue.job import Job
 from awsglue.dynamicframe import DynamicFrame
 from pyspark.sql.functions import col
+from awsglue.transforms import *
+
 
 
 # env variables
@@ -37,8 +39,9 @@ source_customer = glueContext.create_dynamic_frame.from_catalog(
     table_name="customer_landing",
     transformation_ctx="source_customer",
     )
+source_customer = Filter.apply(source_customer, lambda row: (row["shareWithResearchAsOfDate"]) > 0)
 source_customer_df = source_customer.toDF()
-research_purpose_agreed = source_customer_df.na.drop(subset=["shareWithResearchAsOfDate"])
+# research_purpose_agreed = source_customer_df.na.drop(subset=["shareWithResearchAsOfDate"])
 emails = research_purpose_agreed.select(col("email")).distinct()
 email_list = [item['email'] for item in emails.collect()]
 
