@@ -1,14 +1,15 @@
+# trainer_trusted_to_curated.py
 import sys
 import json
 import datetime
 from pyspark.sql import SparkSession
 from pyspark.conf import SparkConf
 from pyspark.context import SparkContext
+from pyspark.sql.functions import col
 from awsglue.utils import getResolvedOptions
 from awsglue.context import GlueContext
 from awsglue.job import Job
 from awsglue.dynamicframe import DynamicFrame
-from pyspark.sql.functions import col
 
 
 # env variables
