@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta
-import pendulum
 import os
+import pendulum
 from airflow.decorators import dag
 from airflow.operators.dummy_operator import DummyOperator
 from final_project_operators.stage_redshift import StageToRedshiftOperator
