@@ -25,13 +25,12 @@ class LoadDimensionOperator(BaseOperator):
         db = PostgresHook(postgres_conn_id=self.conn_id)
 
         if not self.append_only:
-            self.log.info(f"Delete {self.table} dimension table")
+
             db.run(f"DELETE FROM {self.table}")
 
         self.log.info(
             f"Insert data from staging table into {self.table} dimension table")
 
         insert_statement = f"INSERT INTO {self.table} {self.sql}"
-        self.log.info(f"Running sql: \n{insert_statement}")
+
         db.run(insert_statement)
-        self.log.info(f"Successfully completed insert into {self.table}")
