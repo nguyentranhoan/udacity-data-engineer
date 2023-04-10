@@ -19,4 +19,4 @@ class DataQualityOperator(BaseOperator):
         # self.conn_id = conn_id
 
     def execute(self, context):
-        self.log.info('DataQualityOperator not implemented yet')
+        

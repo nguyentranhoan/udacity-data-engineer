@@ -19,4 +19,4 @@ class LoadFactOperator(BaseOperator):
         # self.conn_id = conn_id
 
     def execute(self, context):
-        self.log.info('LoadFactOperator not implemented yet')
+        

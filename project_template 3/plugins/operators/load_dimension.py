@@ -19,4 +19,4 @@ class LoadDimensionOperator(BaseOperator):
         # self.conn_id = conn_id
 
     def execute(self, context):
-        self.log.info('LoadDimensionOperator not implemented yet')
+        
