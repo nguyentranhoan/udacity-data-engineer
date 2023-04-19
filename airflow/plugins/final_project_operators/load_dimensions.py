@@ -28,9 +28,6 @@ class LoadDimensionOperator(BaseOperator):
 
             db.run(f"DELETE FROM {self.table}")
 
-        self.log.info(
-            f"Insert data from staging table into {self.table} dimension table")
-
         insert_statement = f"INSERT INTO {self.table} {self.sql}"
 
         db.run(insert_statement)
