@@ -26,13 +26,9 @@ class LoadFactOperator(BaseOperator):
         db = PostgresHook(postgres_conn_id=self.conn_id)
 
         if not self.append_only:
-            
+
             db.run(f"DELETE FROM {self.table}")
 
-        self.log.info(
-            f"Insert data from staging tables into {self.table} fact table")
-
         insert_statement = f"INSERT INTO {self.table} {self.sql}"
-        
+
         db.run(insert_statement)
-        

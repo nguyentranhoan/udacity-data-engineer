@@ -23,10 +23,8 @@ class DataQualityOperator(BaseOperator):
             query = f"SELECT COUNT(*) FROM {table}"
             records = db.get_recordes(query)
             if len(records) < 1 or len(records[0]) < 1:
-                raise ValueError(
-                    f"Data quality check failed. {table} returned no results")
+                raise ValueError(f"Data quality check failed. {table} returned no results")
 
             num_records = records[0][0]
             if num_records < 1:
-                raise ValueError(
-                    f"Data quality check failed. {table} contained 0 rows")
+                raise ValueError(f"Data quality check failed. {table} contained 0 rows")
