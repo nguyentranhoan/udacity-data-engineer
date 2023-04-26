@@ -39,6 +39,7 @@ class StageToRedshiftOperator(BaseOperator):
 
         db = PostgresHook(postgres_conn_id=self.conn_id)
 
+        self.log.info('Deleting...')
         db.run("DELETE FROM {}".format(self.table))
 
         # Backfill data
@@ -47,8 +48,7 @@ class StageToRedshiftOperator(BaseOperator):
             self.s3_path,
             credentials.access_key,
             credentials.secret_key,
-            self.json_path,
-            self.execution_date
+            self.json_path
         )
 
         db.run(formatted_sql)
